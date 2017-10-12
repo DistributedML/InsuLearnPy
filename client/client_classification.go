@@ -157,10 +157,12 @@ func parseUserInput() {
 
 	// Reads the training and test sets again on the Python side
 	case "read":
+		fmt.Printf("Reading data. Train %s, Test %s \n", trainset, testset)
 		read.CallFunction(python.PyString_FromString(trainset), python.PyString_FromString(testset))
 
 	// Trains the model on the Python side; the model, training error, and training set size are returned
 	case "train":
+		fmt.Printf("Training model of type %s \n", modeltype)
 		trainDict := trainlocal.CallFunction(python.PyString_FromString(modeltype))
 
 		model.Model = python.PyString_AsString(python.PyDict_GetItem(trainDict, python.PyString_FromString("model")))
@@ -254,12 +256,12 @@ func requestGlobal() {
 
 // Helper function which is used to test a model sent from the server and respond to the server with the results
 func testModel(id int, testmodel ILModel) {
-	fmt.Printf("\n <-- Received test requset.\nEnter command: ")
+	fmt.Printf("\n <-- Received test request.\nEnter command: ")
 	testDict := train.CallFunction(python.PyString_FromString(testmodel.Model))
 	testmodel.LocalError = python.PyFloat_AsDouble(python.PyDict_GetItem(testDict, python.PyString_FromString("error")))
 	testmodel.Size = python.PyFloat_AsDouble(python.PyDict_GetItem(testDict, python.PyString_FromString("size")))
 	msg := message{id, myaddr.String(), name, "test_complete", testmodel, gempty}
-	fmt.Printf("\n --> Sending completed test requset.")
+	fmt.Printf("\n --> Sending completed test request.")
 	tcpSend(msg)
 	fmt.Printf("Enter command: ")
 }
@@ -292,10 +294,18 @@ func parseArgs() {
 	flag.Parse()
 	inputargs := flag.Args()
 	var err error
-	if len(inputargs) < 7 {
+	if len(inputargs) < 6 {
 		fmt.Printf("Not enough inputs.\n")
-		return
+		fmt.Printf("USAGE: go run client.go ARGS\n")
+		fmt.Printf("0 -- Name\n")
+		fmt.Printf("1 -- My Address\n")
+		fmt.Printf("2 -- Server Address\n")
+		fmt.Printf("3 -- Training Set Name\n")
+		fmt.Printf("4 -- Test Set Name\n")
+		fmt.Printf("5 -- Model Type\n")
+		os.Exit(1)
 	}
+
 	name = inputargs[0]
 	myaddr, err = net.ResolveTCPAddr("tcp", inputargs[1])
 	checkError(err)
@@ -304,7 +314,7 @@ func parseArgs() {
 	trainset = inputargs[3]
 	testset = inputargs[4]
 	modeltype = inputargs[5]
-	logger = govec.InitGoVector(inputargs[0], inputargs[6])
+	logger = govec.InitGoVector(inputargs[0], inputargs[0])
 }
 
 // Helper function for error checking purposes

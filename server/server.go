@@ -419,7 +419,8 @@ func parseArgs() {
 	var err error
 	if len(inputargs) < 2 {
 		fmt.Printf("Not enough inputs.\n")
-		return
+		fmt.Printf("USAGE: go run server.go tcpAddress serverName\n")
+		os.Exit(1)
 	}
 	myaddr, err = net.ResolveTCPAddr("tcp", inputargs[0])
 	checkError(err)
