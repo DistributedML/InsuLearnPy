@@ -94,6 +94,10 @@ func main() {
 	// Initialize TCP Connection and listener
 	l, _ = net.ListenTCP("tcp", myaddr)
 	fmt.Printf("Node initialized as %v.\n", name)
+	// LOAD THE DATA BEFORE DOING ANYTHING!
+	fmt.Printf("Reading data. Train %s, Test %s \n", trainset, testset)
+	read.CallFunction(python.PyString_FromString(trainset), python.PyString_FromString(testset))
+
 	go listener()
 
 	// Repeat until join is complete
