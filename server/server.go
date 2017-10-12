@@ -5,7 +5,7 @@ import (
 	"encoding/gob"
 	"flag"
 	"fmt"
-	"github.com/arcaneiceman/GoVector/govec"
+	"github.com/DistributedClocks/GoVector/govec"
 	"github.com/sbinet/go-python"
 	"math"
 	"net"
