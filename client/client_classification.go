@@ -9,6 +9,7 @@ import (
 	"github.com/sbinet/go-python"
 	"net"
 	"os"
+	"time"
 )
 
 var (
@@ -97,6 +98,9 @@ func main() {
 	// LOAD THE DATA BEFORE DOING ANYTHING!
 	fmt.Printf("Reading data. Train %s, Test %s \n", trainset, testset)
 	read.CallFunction(python.PyString_FromString(trainset), python.PyString_FromString(testset))
+
+	// Let the python load up before serving test requests
+	time.Sleep(time.Second)
 
 	go listener()
 
